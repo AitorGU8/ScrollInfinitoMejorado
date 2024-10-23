@@ -15,6 +15,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var etTask:EditText
     private lateinit var rvTask:RecyclerView
 
+    var tasks = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun addTask() {
         val taskToAdd=etTask.text.toString()
+        tasks.add(taskToAdd)
     }
 
     private fun initView() {
