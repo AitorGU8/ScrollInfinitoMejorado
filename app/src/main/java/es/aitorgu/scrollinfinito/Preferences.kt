@@ -13,6 +13,9 @@ class Preferences(context: Context) {
 
     fun saveTasks(tasks:List<String>){
     prefs.edit().putStringSet(TASKS,tasks.toSet()).apply()
+    }
 
+    fun getTasks():List<String>{
+        return prefs.getStringSet(TASKS, emptySet<String>())?.toMutableList() ?: mutableListOf()
     }
 }
