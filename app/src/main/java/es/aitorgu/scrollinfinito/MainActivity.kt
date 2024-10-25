@@ -1,5 +1,6 @@
 package es.aitorgu.scrollinfinito
 
+import android.icu.text.Transliterator.Position
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -40,8 +41,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         rvTask.layoutManager = LinearLayoutManager(this)
-        adapter= TaskAdapter(tasks)
+        adapter= TaskAdapter(tasks,{deleteTask(it)})
         rvTask.adapter = adapter
+    }
+    private fun deleteTask(position:Int){
+        tasks.removeAt(position)
+        adapter.notifyDataSetChanged()
     }
 
     private fun initListeners() {
