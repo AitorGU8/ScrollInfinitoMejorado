@@ -1,5 +1,6 @@
 package es.aitorgu.scrollinfinitoMejorado
 
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -69,6 +70,7 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Eliminar tarea")
             .setMessage("¿Estás seguro de que deseas eliminar esta tarea?")
             .setPositiveButton("Sí") { dialog, _ ->
+                playDeleteSound()
                 tasks.removeAt(position)
                 adapter.notifyDataSetChanged()
                 prefs.saveTasks(tasks)
@@ -109,11 +111,37 @@ class MainActivity : AppCompatActivity() {
         if (newTask.isEmpty()) {
             etTask.error = "La tarea no puede estar vacía"
             return
+        }else{
+            playAddSound()
         }
 
         tasks.add(newTask)
         prefs.saveTasks(tasks)
         adapter.notifyDataSetChanged()
         etTask.setText("")
+    }
+
+    /**
+     * Reproduce el sonido cuando se añade una tarea.
+     */
+    private fun playAddSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.add_sound)
+        mediaPlayer.start()
+        mediaPlayer.setOnCompletionListener {
+            it.release()
+        }
+    }
+
+    /**
+     * Método para reproducir el sonido de eliminación de tarea.
+     */
+    private fun playDeleteSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.delete_sound)
+        mediaPlayer.start()
+
+        // Liberar los recursos del MediaPlayer después de la reproducción
+        mediaPlayer.setOnCompletionListener {
+            it.release()
+        }
     }
 }
