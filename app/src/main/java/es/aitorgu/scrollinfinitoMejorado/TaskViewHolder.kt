@@ -16,6 +16,7 @@ class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     // Elementos visuales de cada tarea en el RecyclerView
     private val tvTask: TextView = view.findViewById(R.id.tvTask)
     private val ivTaskDone: ImageView = view.findViewById(R.id.ivTaskDone)
+    private val ivEditTask: ImageView = view.findViewById(R.id.ivEditTask)
 
     /**
      * Método para renderizar los datos de una tarea en la vista.
@@ -26,8 +27,10 @@ class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
      * @param onItemDone Función lambda que se ejecuta cuando se hace clic en el icono de tarea completada.
      *                   Recibe la posición del elemento como parámetro.
      */
-    fun render(task: String, onItemDone: (Int) -> Unit) {
+    fun render(task: String, onItemDone: (Int) -> Unit, onItemEdit: (Int) -> Unit) {
         tvTask.text = task
         ivTaskDone.setOnClickListener { onItemDone(adapterPosition) }
+
+        ivEditTask.setOnClickListener { onItemEdit(adapterPosition) }
     }
 }

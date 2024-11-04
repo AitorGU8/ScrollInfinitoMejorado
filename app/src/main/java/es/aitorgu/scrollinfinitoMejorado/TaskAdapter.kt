@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
  * @param onItemDone Función lambda que se ejecuta cuando el usuario marca una tarea como realizada.
  *                   Recibe la posición de la tarea en la lista como parámetro.
  */
-class TaskAdapter(private val tasks: List<String>, private val onItemDone: (Int) -> Unit) : RecyclerView.Adapter<TaskViewHolder>() {
+class TaskAdapter(private val tasks: List<String>, private val onItemDone: (Int) -> Unit,private val onItemEdit: (Int) -> Unit ) : RecyclerView.Adapter<TaskViewHolder>() {
 
     /**
      * Infla el diseño de cada elemento de la lista y crea una instancia de TaskViewHolder.
@@ -41,6 +41,6 @@ class TaskAdapter(private val tasks: List<String>, private val onItemDone: (Int)
      * @param position La posición de la tarea en la lista.
      */
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.render(tasks[position], onItemDone)
+        holder.render(tasks[position], onItemDone,onItemEdit)
     }
 }

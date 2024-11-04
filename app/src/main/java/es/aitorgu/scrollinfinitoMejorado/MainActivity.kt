@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     private fun initRecyclerView() {
         tasks = prefs.getTasks()
         rvTasks.layoutManager = LinearLayoutManager(this)
-        adapter = TaskAdapter(tasks) { deleteTask(it) }
+        adapter = TaskAdapter(tasks, { deleteTask(it) }, { editTask(it) })
         rvTasks.adapter = adapter
     }
 
@@ -143,5 +143,29 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer.setOnCompletionListener {
             it.release()
         }
+    }
+
+    private fun editTask(position: Int) {
+        val currentTask = tasks[position]
+        val editText = EditText(this).apply {
+            setText(currentTask)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Editar tarea")
+            .setView(editText)
+            .setPositiveButton("Guardar") { dialog, _ ->
+                val newTaskText = editText.text.toString().trim()
+                if (newTaskText.isNotEmpty()) {
+                    tasks[position] = newTaskText  // Actualiza la tarea en la lista
+                    adapter.notifyItemChanged(position)  // Notifica el cambio
+                    prefs.saveTasks(tasks)  // Guarda la lista actualizada
+                } else {
+                    editText.error = "La tarea no puede estar vacía"
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
+            .show()
     }
 }
