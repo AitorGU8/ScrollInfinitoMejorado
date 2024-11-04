@@ -20,17 +20,27 @@ class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     /**
      * Método para renderizar los datos de una tarea en la vista.
-     * Asigna el texto de la tarea al TextView y configura un listener
-     * en el ImageView para ejecutar la función de callback cuando se marca como realizada.
+     * Asigna el texto de la tarea al TextView y configura listeners
+     * para los iconos de edición y marcado como realizada.
      *
-     * @param task El texto de la tarea a mostrar.
+     * @param task La tarea a mostrar.
      * @param onItemDone Función lambda que se ejecuta cuando se hace clic en el icono de tarea completada.
      *                   Recibe la posición del elemento como parámetro.
+     * @param onItemEdit Función lambda que se ejecuta cuando se hace clic en el icono de editar tarea.
+     *                   Recibe la posición del elemento como parámetro.
      */
-    fun render(task: String, onItemDone: (Int) -> Unit, onItemEdit: (Int) -> Unit) {
-        tvTask.text = task
-        ivTaskDone.setOnClickListener { onItemDone(adapterPosition) }
+    fun render(task: Task, onItemDone: (Int) -> Unit, onItemEdit: (Int) -> Unit) {
+        tvTask.text = task.description
 
-        ivEditTask.setOnClickListener { onItemEdit(adapterPosition) }
+        // Configura el listener para marcar la tarea como completada
+        ivTaskDone.setOnClickListener {
+            // Aquí podrías cambiar el estado de la tarea o realizar alguna acción específica
+            onItemDone(adapterPosition)
+        }
+
+        // Configura el listener para editar la tarea
+        ivEditTask.setOnClickListener {
+            onItemEdit(adapterPosition)
+        }
     }
 }

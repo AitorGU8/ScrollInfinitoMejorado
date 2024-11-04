@@ -8,7 +8,6 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import es.aitorgu.scrollinfinitoMejorado.TaskApplication.Companion.prefs
 
 /**
  * MainActivity es la actividad principal de la aplicación.
@@ -16,15 +15,15 @@ import es.aitorgu.scrollinfinitoMejorado.TaskApplication.Companion.prefs
  */
 class MainActivity : AppCompatActivity() {
     // Elementos de la interfaz
-    lateinit var etTask: EditText
-    lateinit var btnAddTask: Button
-    lateinit var rvTasks: RecyclerView
+    private lateinit var etTask: EditText
+    private lateinit var btnAddTask: Button
+    private lateinit var rvTasks: RecyclerView
 
     // Adaptador para gestionar las tareas en el RecyclerView
-    lateinit var adapter: TaskAdapter
+    private lateinit var adapter: TaskAdapter
 
-    // Lista mutable que almacena las tareas del usuario
-    var tasks = mutableListOf<String>()
+    // Instancia de la base de datos
+    private lateinit var taskDatabase: TaskDatabase
 
     /**
      * Método onCreate se llama al iniciar la actividad.
@@ -35,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        taskDatabase = TaskDatabase(this)  // Inicializa la base de datos
         initUi()
     }
 
@@ -49,11 +49,11 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Configura el RecyclerView para mostrar la lista de tareas.
-     * Obtiene las tareas guardadas de las preferencias, configura el layout manager,
+     * Obtiene las tareas de la base de datos, configura el layout manager,
      * y establece el adaptador para el RecyclerView.
      */
     private fun initRecyclerView() {
-        tasks = prefs.getTasks()
+        val tasks = taskDatabase.getTasks()  // Obtiene tareas de la base de datos
         rvTasks.layoutManager = LinearLayoutManager(this)
         adapter = TaskAdapter(tasks, { deleteTask(it) }, { editTask(it) })
         rvTasks.adapter = adapter
@@ -70,15 +70,12 @@ class MainActivity : AppCompatActivity() {
             .setTitle("Eliminar tarea")
             .setMessage("¿Estás seguro de que deseas eliminar esta tarea?")
             .setPositiveButton("Sí") { dialog, _ ->
-                playDeleteSound()
-                tasks.removeAt(position)
-                adapter.notifyDataSetChanged()
-                prefs.saveTasks(tasks)
+                val taskId = adapter.getTaskId(position)  // Obtiene el ID de la tarea
+                taskDatabase.deleteTask(taskId)  // Elimina la tarea de la base de datos
+                adapter.notifyItemRemoved(position)  // Notifica al adaptador que se ha eliminado un elemento
                 dialog.dismiss()
             }
-            .setNegativeButton("No") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("No") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
@@ -102,23 +99,21 @@ class MainActivity : AppCompatActivity() {
 
     /**
      * Añade una nueva tarea a la lista si el campo de texto no está vacío.
-     * Muestra un error si el campo está vacío, y guarda la lista en las preferencias
-     * después de agregar la nueva tarea.
+     * Guarda la tarea en la base de datos después de agregarla.
      */
     private fun addTask() {
-        val newTask = etTask.text.toString().trim()
+        val newTaskDescription = etTask.text.toString().trim()
 
-        if (newTask.isEmpty()) {
+        if (newTaskDescription.isEmpty()) {
             etTask.error = "La tarea no puede estar vacía"
             return
-        }else{
+        } else {
             playAddSound()
         }
 
-        tasks.add(newTask)
-        prefs.saveTasks(tasks)
-        adapter.notifyDataSetChanged()
-        etTask.setText("")
+        val newTaskId = taskDatabase.addTask(newTaskDescription)  // Añade la tarea a la base de datos
+        adapter.addTask(Task(newTaskId, newTaskDescription))  // Añade la tarea al adaptador
+        etTask.setText("")  // Limpia el campo de texto
     }
 
     /**
@@ -146,20 +141,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun editTask(position: Int) {
-        val currentTask = tasks[position]
+        val currentTask = adapter.getTask(position)  // Obtiene la tarea actual del adaptador
         val editText = EditText(this).apply {
-            setText(currentTask)
+            setText(currentTask.description)  // Prellena el EditText con la descripción actual
         }
 
         AlertDialog.Builder(this)
             .setTitle("Editar tarea")
             .setView(editText)
             .setPositiveButton("Guardar") { dialog, _ ->
-                val newTaskText = editText.text.toString().trim()
-                if (newTaskText.isNotEmpty()) {
-                    tasks[position] = newTaskText  // Actualiza la tarea en la lista
-                    adapter.notifyItemChanged(position)  // Notifica el cambio
-                    prefs.saveTasks(tasks)  // Guarda la lista actualizada
+                val newTaskDescription = editText.text.toString().trim()
+                if (newTaskDescription.isNotEmpty()) {
+                    val taskId = currentTask.id
+                    taskDatabase.updateTask(taskId, newTaskDescription)  // Actualiza la tarea en la base de datos
+                    adapter.updateTask(position, newTaskDescription)  // Actualiza la tarea en el adaptador
                 } else {
                     editText.error = "La tarea no puede estar vacía"
                 }

@@ -9,10 +9,16 @@ import androidx.recyclerview.widget.RecyclerView
  * una lista de tareas en un RecyclerView.
  *
  * @param tasks Lista de tareas que se mostrarán en el RecyclerView.
- * @param onItemDone Función lambda que se ejecuta cuando el usuario marca una tarea como realizada.
+ * @param onItemDelete Función lambda que se ejecuta cuando el usuario elimina una tarea.
+ *                     Recibe la posición de la tarea en la lista como parámetro.
+ * @param onItemEdit Función lambda que se ejecuta cuando el usuario edita una tarea.
  *                   Recibe la posición de la tarea en la lista como parámetro.
  */
-class TaskAdapter(private val tasks: List<String>, private val onItemDone: (Int) -> Unit,private val onItemEdit: (Int) -> Unit ) : RecyclerView.Adapter<TaskViewHolder>() {
+class TaskAdapter(
+    private val tasks: MutableList<Task>,
+    private val onItemDelete: (Int) -> Unit,
+    private val onItemEdit: (Int) -> Unit
+) : RecyclerView.Adapter<TaskViewHolder>() {
 
     /**
      * Infla el diseño de cada elemento de la lista y crea una instancia de TaskViewHolder.
@@ -41,6 +47,47 @@ class TaskAdapter(private val tasks: List<String>, private val onItemDone: (Int)
      * @param position La posición de la tarea en la lista.
      */
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.render(tasks[position], onItemDone,onItemEdit)
+        holder.render(tasks[position], onItemDelete, onItemEdit)
+    }
+
+    /**
+     * Agrega una nueva tarea a la lista y notifica al adaptador sobre el nuevo elemento.
+     *
+     * @param task La tarea que se desea agregar.
+     */
+    fun addTask(task: Task) {
+        tasks.add(task)
+        notifyItemInserted(tasks.size - 1)
+    }
+
+    /**
+     * Actualiza una tarea existente en la lista y notifica al adaptador sobre el cambio.
+     *
+     * @param position La posición de la tarea a actualizar.
+     * @param newDescription La nueva descripción de la tarea.
+     */
+    fun updateTask(position: Int, newDescription: String) {
+        tasks[position] = tasks[position].copy(description = newDescription)
+        notifyItemChanged(position)
+    }
+
+    /**
+     * Obtiene la tarea en una posición específica.
+     *
+     * @param position La posición de la tarea en la lista.
+     * @return La tarea en la posición especificada.
+     */
+    fun getTask(position: Int): Task {
+        return tasks[position]
+    }
+
+    /**
+     * Obtiene el ID de la tarea en una posición específica.
+     *
+     * @param position La posición de la tarea en la lista.
+     * @return El ID de la tarea.
+     */
+    fun getTaskId(position: Int): Long {
+        return tasks[position].id
     }
 }
