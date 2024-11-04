@@ -1,4 +1,4 @@
-package es.aitorgu.scrollinfinito
+package es.aitorgu.scrollinfinitoMejorado
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,4 +1,4 @@
-package es.aitorgu.scrollinfinito
+package es.aitorgu.scrollinfinitoMejorado
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,7 +7,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import es.aitorgu.scrollinfinito.TaskApplication.Companion.prefs
+import es.aitorgu.scrollinfinitoMejorado.TaskApplication.Companion.prefs
 
 /**
  * MainActivity es la actividad principal de la aplicación.

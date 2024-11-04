@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "es.aitorgu.scrollinfinito"
+    namespace = "es.aitorgu.scrollinfinitoMejorado"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "es.aitorgu.scrollinfinito"
+        applicationId = "es.aitorgu.scrollinfinitoMejorado"
         minSdk = 30
         targetSdk = 34
         versionCode = 1

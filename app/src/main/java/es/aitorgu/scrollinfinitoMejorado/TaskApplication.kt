@@ -1,4 +1,4 @@
-package es.aitorgu.scrollinfinito
+package es.aitorgu.scrollinfinitoMejorado
 
 import android.app.Application
 

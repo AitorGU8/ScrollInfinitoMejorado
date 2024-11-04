@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ScrollInfinito"
+rootProject.name = "scrollinfinitoMejorado"
 include(":app")
  
