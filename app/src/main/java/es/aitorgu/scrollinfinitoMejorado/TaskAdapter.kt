@@ -90,4 +90,21 @@ class TaskAdapter(
     fun getTaskId(position: Int): Long {
         return tasks[position].id
     }
+
+    /**
+     * Elimina una tarea de la lista en una posición específica y notifica al adaptador.
+     *
+     * @param position La posición de la tarea en la lista que se desea eliminar.
+     *
+     * Esta función elimina la tarea de la lista interna `tasks` en la posición dada.
+     * Después de eliminarla, notifica al adaptador sobre la eliminación del elemento
+     * y actualiza el rango de elementos en el RecyclerView, asegurando que las posiciones
+     * de los elementos restantes estén sincronizadas con la vista.
+     */
+    fun removeTask(position: Int) {
+        tasks.removeAt(position)  // Elimina la tarea de la lista interna
+        notifyItemRemoved(position)  // Notifica al adaptador que se eliminó un ítem en esta posición
+        notifyItemRangeChanged(position, tasks.size)  // Actualiza las posiciones en la vista
+    }
+
 }

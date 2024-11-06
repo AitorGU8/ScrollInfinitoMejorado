@@ -72,6 +72,8 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton("Sí") { dialog, _ ->
                 val taskId = adapter.getTaskId(position)  // Obtiene el ID de la tarea
                 taskDatabase.deleteTask(taskId)  // Elimina la tarea de la base de datos
+                adapter.removeTask(position)  // Elimina la tarea del adaptador y notifica al RecyclerView
+                playDeleteSound()  // Opcional: reproduce un sonido al eliminar
                 adapter.notifyItemRemoved(position)  // Notifica al adaptador que se ha eliminado un elemento
                 dialog.dismiss()
             }
